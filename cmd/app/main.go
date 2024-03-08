@@ -35,6 +35,6 @@ func main() {
 
 	r := rest.NewRest(svc, middleware)
 
-	r.MountEndPoin()
+	r.MountEndpoints()
 	r.Run()
 }

@@ -11,7 +11,7 @@ import (
 )
 
 type Interface interface {
-	CreatToken(userId uuid.UUID) (string, error)
+	CreateToken(userId uuid.UUID) (string, error)
 }
 
 type jsonWebToken struct {
@@ -37,7 +37,7 @@ func Init() Interface {
 	}
 }
 
-func (j *jsonWebToken) CreatToken(userId uuid.UUID) (string, error) {
+func (j *jsonWebToken) CreateToken(userId uuid.UUID) (string, error) {
 	claims := &Claims{
 		UserId: userId,
 		RegisteredClaims: jwt.RegisteredClaims{

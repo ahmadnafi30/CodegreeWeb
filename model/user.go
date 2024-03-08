@@ -14,7 +14,7 @@ type LoginAcc struct {
 	Password string `json:"password" binding:"required"`
 }
 
-type UserLoginRespone struct {
+type UserLoginResponse struct {
 	Token string `json:"token"`
 }
 

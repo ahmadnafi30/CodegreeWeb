@@ -27,17 +27,25 @@ func NewRest(service *service.Service, middleware middleware.Interface) *Rest {
 	}
 }
 
-func (r *Rest) MountEndPoin() {
+func (r *Rest) MountEndpoints() {
 	r.router.Use(r.middleware.Timeout())
 	routerGroup := r.router.Group("/api/v1/")
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
-
+	routerGroup.GET("/test", r.TestTimeout)
 }
 
 func (r *Rest) Run() {
 	addr := os.Getenv("APP_ADDRESS")
 	port := os.Getenv("APP_PORT")
+
+	if addr == "" {
+		addr = "127.0.0.1"
+	}
+
+	if port == "" {
+		port = "8080"
+	}
 
 	err := r.router.Run(fmt.Sprintf("%s:%s", addr, port))
 	if err != nil {
@@ -45,7 +53,8 @@ func (r *Rest) Run() {
 	}
 }
 
-func testTimeout(ctx *gin.Context) {
+func (r *Rest) TestTimeout(ctx *gin.Context) {
+	// Simulate a long-running operation
 	time.Sleep(3 * time.Second)
-	response.Success(ctx, http.StatusOK, "succes", nil)
+	response.Success(ctx, http.StatusOK, "success", nil)
 }

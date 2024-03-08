@@ -12,7 +12,7 @@ import (
 
 type IUserService interface {
 	Register(param model.UserRegister) error
-	Login(param model.LoginAcc) (model.UserLoginRespone, error)
+	Login(param model.LoginAcc) (model.UserLoginResponse, error)
 }
 
 type UserService struct {
@@ -56,8 +56,8 @@ func (u *UserService) Register(param model.UserRegister) error {
 	return nil
 }
 
-func (u *UserService) Login(param model.LoginAcc) (model.UserLoginRespone, error) {
-	var result model.UserLoginRespone
+func (u *UserService) Login(param model.LoginAcc) (model.UserLoginResponse, error) {
+	var result model.UserLoginResponse
 
 	user, err := u.user.GetUser(model.UserParam{
 		Email: param.Email,
@@ -65,13 +65,12 @@ func (u *UserService) Login(param model.LoginAcc) (model.UserLoginRespone, error
 	if err != nil {
 		return result, err
 	}
-
-	err = u.bcrypt.CompareAndHashPassword(user.Password, param.Password)
+	err = u.bcrypt.CompareHashAndPassword(user.Password, param.Password)
 	if err != nil {
 		return result, err
 	}
 
-	token, err := u.jwt.CreatToken(user.ID)
+	token, err := u.jwt.CreateToken(user.ID)
 	if err != nil {
 		return result, err
 	}
@@ -79,5 +78,4 @@ func (u *UserService) Login(param model.LoginAcc) (model.UserLoginRespone, error
 	result.Token = token
 
 	return result, nil
-
 }

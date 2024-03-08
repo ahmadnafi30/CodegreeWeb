@@ -27,15 +27,14 @@ func (r *Rest) Register(ctx *gin.Context) {
 func (r *Rest) Login(ctx *gin.Context) {
 	param := model.LoginAcc{}
 
-	err := ctx.ShouldBindJSON(&param)
-	if err != nil {
-		response.Error(ctx, http.StatusBadRequest, "failed to bind input", err)
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		response.Error(ctx, http.StatusBadRequest, "invalid email or passowrd", err)
 		return
 	}
 
 	token, err := r.service.UserService.Login(param)
 	if err != nil {
-		response.Error(ctx, http.StatusInternalServerError, "failed to login", err)
+		response.Error(ctx, http.StatusUnauthorized, "failed to login", err)
 		return
 	}
 

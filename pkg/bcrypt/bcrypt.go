@@ -1,36 +1,32 @@
 package bcrypt
 
-import lib_bcrypt "golang.org/x/crypto/bcrypt"
+import "golang.org/x/crypto/bcrypt"
 
 type Interface interface {
 	GenerateFromPassword(password string) (string, error)
-	CompareAndHashPassword(hashedPassword string, password string) error
+	CompareHashAndPassword(hashedPassword string, password string) error
 }
 
-type bcrypt struct {
+type bcryptImpl struct {
 	cost int
 }
 
 func Init() Interface {
-	return &bcrypt{
-		cost: lib_bcrypt.DefaultCost,
+	return &bcryptImpl{
+		cost: bcrypt.DefaultCost,
 	}
 }
 
-func (b *bcrypt) GenerateFromPassword(password string) (string, error) {
-	passwordByte, err := lib_bcrypt.GenerateFromPassword([]byte(password), b.cost)
+func (b *bcryptImpl) GenerateFromPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), b.cost)
 	if err != nil {
 		return "", err
 	}
 
-	return string(passwordByte), nil
+	return string(hashedPassword), nil
 }
 
-func (b *bcrypt) CompareAndHashPassword(hashedPassword string, password string) error {
-	err := lib_bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (b *bcryptImpl) CompareHashAndPassword(hashedPassword string, password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err
 }
