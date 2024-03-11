@@ -32,7 +32,12 @@ func (r *Rest) MountEndpoints() {
 	routerGroup := r.router.Group("/api/v1/")
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
-	routerGroup.GET("/test", r.TestTimeout)
+	routerGroup.GET("/profile", r.GetProfile)
+	routerGroup.GET("/login-user", r.middleware.AutenticateUser, r.GetLoginUser)
+
+	routerGroup.POST("/create_onboarding_question", r.CreateOnboardingQuestion)
+	routerGroup.GET("/onboarding_questions", r.GetOnboardingQuestions)
+	routerGroup.POST("/answer_boarding", r.AnswerOnBoardingQuestion)
 }
 
 func (r *Rest) Run() {
@@ -54,7 +59,6 @@ func (r *Rest) Run() {
 }
 
 func (r *Rest) TestTimeout(ctx *gin.Context) {
-	// Simulate a long-running operation
 	time.Sleep(3 * time.Second)
 	response.Success(ctx, http.StatusOK, "success", nil)
 }

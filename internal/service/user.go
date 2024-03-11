@@ -6,6 +6,7 @@ import (
 	"CodegreeWebbs/model"
 	"CodegreeWebbs/pkg/bcrypt"
 	"CodegreeWebbs/pkg/jwt"
+	"errors"
 
 	"github.com/google/uuid"
 )
@@ -13,6 +14,8 @@ import (
 type IUserService interface {
 	Register(param model.UserRegister) error
 	Login(param model.LoginAcc) (model.UserLoginResponse, error)
+	GetProfile(userID string) (model.UserProfile, error)
+	GetUser(param model.UserParam) (entity.User, error)
 }
 
 type UserService struct {
@@ -78,4 +81,21 @@ func (u *UserService) Login(param model.LoginAcc) (model.UserLoginResponse, erro
 	result.Token = token
 
 	return result, nil
+}
+
+func (u *UserService) GetUser(param model.UserParam) (entity.User, error) {
+	return u.user.GetUser(param)
+}
+
+func (u *UserService) GetProfile(userID string) (model.UserProfile, error) {
+	if userID == "" {
+		return model.UserProfile{}, errors.New("empty userID")
+	}
+
+	userProfile, err := u.user.SeeProfile(userID)
+	if err != nil {
+		return model.UserProfile{}, err
+	}
+
+	return userProfile, nil
 }

@@ -23,3 +23,19 @@ type UserParam struct {
 	Email    string    `json:"-"`
 	Password string    `json:"-"`
 }
+
+type UserProfile struct {
+	ID     uuid.UUID
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Level  int    `json:"level"`
+	Xp     uint64 `json:"xp"`
+	Hearth int    `json:"hearth"`
+}
+
+type UserAnswerOnBoarding struct {
+	ID         uint      `json:"id"`
+	UserID     uuid.UUID `json:"-"`
+	QuestionID uint      `json:"question_id"`
+	Response   string    `json:"response"`
+}

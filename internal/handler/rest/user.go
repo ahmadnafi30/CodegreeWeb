@@ -1,8 +1,12 @@
 package rest
 
 import (
+	"CodegreeWebbs/entity"
 	"CodegreeWebbs/model"
 	"CodegreeWebbs/pkg/response"
+	"errors"
+
+	// "errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +16,7 @@ func (r *Rest) Register(ctx *gin.Context) {
 	param := model.UserRegister{}
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
-		response.Error(ctx, http.StatusBadRequest, "Failed bind inout", err)
+		response.Error(ctx, http.StatusBadRequest, "Failed bind input", err)
 		return
 	}
 
@@ -28,7 +32,7 @@ func (r *Rest) Login(ctx *gin.Context) {
 	param := model.LoginAcc{}
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
-		response.Error(ctx, http.StatusBadRequest, "invalid email or passowrd", err)
+		response.Error(ctx, http.StatusBadRequest, "invalid email or password", err)
 		return
 	}
 
@@ -39,4 +43,25 @@ func (r *Rest) Login(ctx *gin.Context) {
 	}
 
 	response.Success(ctx, http.StatusOK, "success login to system", token)
+}
+
+func (r *Rest) GetLoginUser(ctx *gin.Context) {
+	user, ok := ctx.Get("user")
+	if !ok {
+		response.Error(ctx, http.StatusInternalServerError, "failed get login user", errors.New("not found login user"))
+		return
+	}
+	response.Success(ctx, http.StatusOK, "Success get user", user.(entity.User))
+}
+
+func (r *Rest) GetProfile(ctx *gin.Context) {
+	userID := ctx.GetString("userID")
+
+	userProfile, err := r.service.UserService.GetProfile(userID)
+	if err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "failed to get user profile", err)
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "success get user profile", userProfile)
 }

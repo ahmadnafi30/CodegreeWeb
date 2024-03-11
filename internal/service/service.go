@@ -8,7 +8,8 @@ import (
 )
 
 type Service struct {
-	UserService IUserService
+	UserService       IUserService
+	OnBoardingService IOnBoardingService
 }
 
 type InitParam struct {
@@ -19,7 +20,9 @@ type InitParam struct {
 
 func NewService(param InitParam) *Service {
 	userService := NewUserService(param.Repository.UserRepository, param.Bcrypt, param.JwtAuth)
+	onBoardingService := NewOnBoardingService(param.Repository.OnBoardingRepo)
 	return &Service{
-		UserService: userService,
+		UserService:       userService,
+		OnBoardingService: onBoardingService,
 	}
 }

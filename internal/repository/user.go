@@ -10,6 +10,7 @@ import (
 type IUserRepository interface {
 	CreateUser(user entity.User) (entity.User, error)
 	GetUser(param model.UserParam) (entity.User, error)
+	SeeProfile(userID string) (model.UserProfile, error)
 }
 
 type UserRepository struct {
@@ -37,4 +38,13 @@ func (u *UserRepository) GetUser(param model.UserParam) (entity.User, error) {
 		return user, err
 	}
 	return user, nil
+}
+
+func (u *UserRepository) SeeProfile(userID string) (model.UserProfile, error) {
+	var userProfile model.UserProfile
+	err := u.db.Debug().Where("user_id = ?", userID).Find(&userProfile).Error
+	if err != nil {
+		return userProfile, err
+	}
+	return userProfile, nil
 }

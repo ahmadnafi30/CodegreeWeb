@@ -10,7 +10,8 @@ import (
 func Migration(db *gorm.DB) error {
 	if err := db.AutoMigrate(
 		&entity.User{},
-		// &entity.Role{},
+		&entity.Onboarding{},
+		&entity.OptionBoarding{},
 		&entity.LanguageCode{},
 		&entity.Question{},
 		&entity.Option{},

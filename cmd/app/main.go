@@ -31,7 +31,7 @@ func main() {
 		JwtAuth:    jwtAuth,
 	})
 
-	middleware := middleware.Init()
+	middleware := middleware.Init(jwtAuth, svc)
 
 	r := rest.NewRest(svc, middleware)
 
