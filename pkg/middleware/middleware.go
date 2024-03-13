@@ -9,7 +9,7 @@ import (
 
 type Interface interface {
 	Timeout() gin.HandlerFunc
-	AutenticateUser(ctx *gin.Context)
+	AuthenticateUser(ctx *gin.Context)
 	OnlySubscription(ctx *gin.Context)
 }
 

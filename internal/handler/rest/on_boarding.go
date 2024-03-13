@@ -39,14 +39,29 @@ func (r *Rest) CreateOnboardingQuestion(ctx *gin.Context) {
 
 	response.Success(ctx, http.StatusCreated, "Onboarding question created successfully", nil)
 }
-func (r *Rest) AnswerOnBoardingQuestion(ctx *gin.Context) {
-	var answer model.UserAnswerOnBoarding
+func (r *Rest) AnswerOnboardingQuestion(ctx *gin.Context) {
+	var answer entity.UserAnswerOnBoarding
 	if err := ctx.ShouldBindJSON(&answer); err != nil {
 		response.Error(ctx, http.StatusBadRequest, "Invalid request", err)
 		return
 	}
 
-	response.Success(ctx, http.StatusOK, "Success", nil)
+	if answer.QuestionID == 0 {
+		response.Error(ctx, http.StatusBadRequest, "Invalid QuestionID", nil)
+		return
+	}
+
+	if answer.Answer == "" {
+		response.Error(ctx, http.StatusBadRequest, "Empty Answer", nil)
+		return
+	}
+
+	if err := r.service.OnBoardingService.SaveUserAnswer(&answer); err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "Failed to save user answer", err)
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "User answer saved successfully", nil)
 }
 
 func (r *Rest) GetOnboardingQuestions(ctx *gin.Context) {

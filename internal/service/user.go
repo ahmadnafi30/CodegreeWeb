@@ -56,6 +56,18 @@ func (u *UserService) Register(param model.UserRegister) error {
 		return err
 	}
 
+	userProfile := model.UserProfile{
+		ID:     newUserID,
+		Name:   param.Name,
+		Email:  param.Email,
+		Level:  1,
+		Xp:     0,
+		Hearth: 5,
+	}
+	if err := u.user.CreateProfile(userProfile); err != nil {
+		return err
+	}
+
 	return nil
 }
 

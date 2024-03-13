@@ -2,12 +2,15 @@ package config
 
 import (
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 )
 
 func LoadEnv() error {
-	if err := godotenv.Load("../../.env"); err != nil {
+	err := godotenv.Load()
+	env := os.Getenv("ENV")
+	if err != nil && env == "" {
 		log.Fatalf("error load env : %v", err)
 	}
 	return nil

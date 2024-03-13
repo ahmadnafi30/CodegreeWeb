@@ -5,7 +5,6 @@ import (
 	"CodegreeWebbs/pkg/middleware"
 	"CodegreeWebbs/pkg/response"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -32,30 +31,21 @@ func (r *Rest) MountEndpoints() {
 	routerGroup := r.router.Group("/api/v1/")
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
-	routerGroup.GET("/profile", r.GetProfile)
-	routerGroup.GET("/login-user", r.middleware.AutenticateUser, r.GetLoginUser)
+	routerGroup.GET("/profile", r.middleware.AuthenticateUser, r.GetProfile)
+	// routerGroup.GET("/login-user", r.middleware.AuthenticateUser, r.GetLoginUser)
 
 	routerGroup.POST("/create_onboarding_question", r.CreateOnboardingQuestion)
-	routerGroup.GET("/onboarding_questions", r.GetOnboardingQuestions)
-	routerGroup.POST("/answer_boarding", r.AnswerOnBoardingQuestion)
+	routerGroup.GET("/onboarding_questions", r.middleware.AuthenticateUser, r.GetOnboardingQuestions)
+	// routerGroup.POST("/answer_boarding", r.middleware.AuthenticateUser, r.AnswerOnboardingQuestion) masih gagal
 }
 
 func (r *Rest) Run() {
-	addr := os.Getenv("APP_ADDRESS")
-	port := os.Getenv("APP_PORT")
-
-	if addr == "" {
-		addr = "127.0.0.1"
-	}
-
+	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "5000"
 	}
 
-	err := r.router.Run(fmt.Sprintf("%s:%s", addr, port))
-	if err != nil {
-		log.Fatalf("Error while serving: %v", err)
-	}
+	r.router.Run(fmt.Sprintf(":%s", port))
 }
 
 func (r *Rest) TestTimeout(ctx *gin.Context) {

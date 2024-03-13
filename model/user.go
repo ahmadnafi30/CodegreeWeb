@@ -3,7 +3,6 @@ package model
 import "github.com/google/uuid"
 
 type UserRegister struct {
-	ID       uint   `json:"-"`
 	Name     string `json:"name" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=8"`
@@ -25,17 +24,17 @@ type UserParam struct {
 }
 
 type UserProfile struct {
-	ID     uuid.UUID
-	Name   string `json:"name"`
-	Email  string `json:"email"`
-	Level  int    `json:"level"`
-	Xp     uint64 `json:"xp"`
-	Hearth int    `json:"hearth"`
+	ID     uuid.UUID `json:"id"`
+	Name   string    `json:"name"`
+	Email  string    `json:"email"`
+	Level  int       `json:"level"`
+	Xp     uint64    `json:"xp"`
+	Hearth int       `json:"hearth"`
 }
 
 type UserAnswerOnBoarding struct {
 	ID         uint      `json:"id"`
 	UserID     uuid.UUID `json:"-"`
 	QuestionID uint      `json:"question_id"`
-	Response   string    `json:"response"`
+	Answer     string    `json:"answer"`
 }

@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func (r *Rest) Register(ctx *gin.Context) {
@@ -55,13 +56,24 @@ func (r *Rest) GetLoginUser(ctx *gin.Context) {
 }
 
 func (r *Rest) GetProfile(ctx *gin.Context) {
-	userID := ctx.GetString("userID")
+	userIDRaw, exists := ctx.Get("userID")
+	if !exists {
+		response.Error(ctx, http.StatusInternalServerError, "failed to get user profile", errors.New("empty userID"))
+		return
+	}
 
-	userProfile, err := r.service.UserService.GetProfile(userID)
+	userID, ok := userIDRaw.(uuid.UUID)
+	if !ok {
+		response.Error(ctx, http.StatusInternalServerError, "failed to get user profile", errors.New("userID is not a UUID"))
+		return
+	}
+
+	userIDStr := userID.String()
+
+	userProfile, err := r.service.UserService.GetProfile(userIDStr)
 	if err != nil {
 		response.Error(ctx, http.StatusInternalServerError, "failed to get user profile", err)
 		return
 	}
-
 	response.Success(ctx, http.StatusOK, "success get user profile", userProfile)
 }

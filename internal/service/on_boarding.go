@@ -39,7 +39,7 @@ func (s *OnBoardingService) SaveUserAnswer(answer *entity.UserAnswerOnBoarding) 
 	if answer.QuestionID == 0 {
 		return errors.New("invalid QuestionID")
 	}
-	if answer.Response == "" {
+	if answer.Answer == "" {
 		return errors.New("empty Response")
 	}
 	return s.OnBoardingRepo.SaveUserAnswer(answer)
