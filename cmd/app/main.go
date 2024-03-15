@@ -10,6 +10,10 @@ import (
 	"CodegreeWebbs/pkg/jwt"
 	"CodegreeWebbs/pkg/middleware"
 	"log"
+	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -30,6 +34,17 @@ func main() {
 		Bcrypt:     bcryptService,
 		JwtAuth:    jwtAuth,
 	})
+	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: true,
+
+		MaxAge: 12 * time.Hour,
+	}))
+	router.Run()
 
 	middleware := middleware.Init(jwtAuth, svc)
 
@@ -37,4 +52,5 @@ func main() {
 
 	r.MountEndpoints()
 	r.Run()
+
 }

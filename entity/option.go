@@ -1,7 +1,8 @@
 package entity
 
 type Option struct {
-	ID         uint   `json:"id" gorm:"primary_key;autoIncrement"`
+	ID         uint   `json:"id"`
 	QuestionID uint   `json:"question_id"`
-	Value      string `json:"value" gorm:"type:text"`
+	Option     string `json:"option"`
+	Value      bool   `json:"value"`
 }

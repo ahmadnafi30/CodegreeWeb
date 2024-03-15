@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type Repository struct {
 	UserRepository IUserRepository
 	OnBoardingRepo IOnBoarding
+	LangauageRepo  RLanguage
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -13,5 +14,6 @@ func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		UserRepository: userRepository,
 		OnBoardingRepo: NewOnBoardingRepo(db),
+		LangauageRepo:  NewLanguageRepo(db),
 	}
 }

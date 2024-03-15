@@ -31,10 +31,3 @@ type UserProfile struct {
 	Xp     uint64    `json:"xp"`
 	Hearth int       `json:"hearth"`
 }
-
-type UserAnswerOnBoarding struct {
-	ID         uint      `json:"id"`
-	UserID     uuid.UUID `json:"-"`
-	QuestionID uint      `json:"question_id"`
-	Answer     string    `json:"answer"`
-}

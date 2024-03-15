@@ -5,9 +5,13 @@ import (
 	"CodegreeWebbs/pkg/middleware"
 	"CodegreeWebbs/pkg/response"
 	"fmt"
+
+	// "log"
 	"net/http"
 	"os"
 	"time"
+
+	// "github.com/gin-contrib/cors"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +31,7 @@ func NewRest(service *service.Service, middleware middleware.Interface) *Rest {
 }
 
 func (r *Rest) MountEndpoints() {
+
 	r.router.Use(r.middleware.Timeout())
 	routerGroup := r.router.Group("/api/v1/")
 	routerGroup.POST("/register", r.Register)
@@ -34,9 +39,13 @@ func (r *Rest) MountEndpoints() {
 	routerGroup.GET("/profile", r.middleware.AuthenticateUser, r.GetProfile)
 	// routerGroup.GET("/login-user", r.middleware.AuthenticateUser, r.GetLoginUser)
 
+	// routerGroup.GET("/next_onboarding_question", r.middleware.AuthenticateUser, r.GetNextOnboardingQuestion)
 	routerGroup.POST("/create_onboarding_question", r.CreateOnboardingQuestion)
 	routerGroup.GET("/onboarding_questions", r.middleware.AuthenticateUser, r.GetOnboardingQuestions)
-	// routerGroup.POST("/answer_boarding", r.middleware.AuthenticateUser, r.AnswerOnboardingQuestion) masih gagal
+	routerGroup.POST("/answer_onboarding_question", r.middleware.AuthenticateUser, r.AnswerOnboardingQuestion)
+	routerGroup.GET("/recomend_language", r.middleware.AuthenticateUser, r.RecommendLanguage)
+
+	routerGroup.POST("/create_language", r.CreateLanguage)
 }
 
 func (r *Rest) Run() {
