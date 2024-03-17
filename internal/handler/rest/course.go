@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"CodegreeWebbs/model"
+	"CodegreeWebbs/entity"
 	"CodegreeWebbs/pkg/response"
 	"net/http"
 
@@ -9,9 +9,26 @@ import (
 )
 
 func (r *Rest) CreateCourse(ctx *gin.Context) {
-	var course model.CreateCourse
-	if err := ctx.ShouldBindJSON(&course); err != nil {
-		response.Error(ctx, http.StatusBadRequest, "Invalid request", err)
+	var courseData entity.Course
+	if err := ctx.BindJSON(&courseData); err != nil {
+		response.Error(ctx, http.StatusBadRequest, "Invalid JSON format", err)
 		return
 	}
+
+	if err := r.service.CourseService.CreateCourse(&courseData); err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "failed to create course", err)
+		return
+	}
+
+	response.Success(ctx, http.StatusCreated, "Create Course success", nil)
+}
+
+func (r *Rest) GetAllCourses(ctx *gin.Context) {
+	courses, err := r.service.CourseService.GetAllCourses()
+	if err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "Failed to get courses", err)
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "Get all courses success", courses)
 }
