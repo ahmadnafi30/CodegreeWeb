@@ -45,7 +45,7 @@ func (r *Rest) MountEndpoints() {
 	routerGroup.POST("/answer_onboarding_question", r.middleware.AuthenticateUser, r.AnswerOnboardingQuestion)
 	routerGroup.GET("/recomend_language", r.middleware.AuthenticateUser, r.RecommendLanguage)
 
-	routerGroup.POST("/create_language", r.CreateLanguage)
+	// routerGroup.POST("/create_language", r.CreateLanguage)
 	routerGroup.POST("/create_course", r.CreateCourse)
 	routerGroup.GET("/get_course", r.GetAllCourses)
 }
