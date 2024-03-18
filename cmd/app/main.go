@@ -10,8 +10,6 @@ import (
 	"CodegreeWebbs/pkg/jwt"
 	"CodegreeWebbs/pkg/middleware"
 	"log"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -34,15 +32,11 @@ func main() {
 		JwtAuth:    jwtAuth,
 	})
 
-	router := gin.Default()
-
-	router.Use(middleware.Cors())
-
 	middlewareAuth := middleware.Init(jwtAuth, svc)
 
 	r := rest.NewRest(svc, middlewareAuth)
 
 	r.MountEndpoints()
 
-	router.Run()
+	r.Run()
 }

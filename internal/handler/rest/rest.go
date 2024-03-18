@@ -31,8 +31,8 @@ func NewRest(service *service.Service, middleware middleware.Interface) *Rest {
 }
 
 func (r *Rest) MountEndpoints() {
-
 	r.router.Use(r.middleware.Timeout())
+	r.router.Use(middleware.Cors())
 	routerGroup := r.router.Group("/api/v1")
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
