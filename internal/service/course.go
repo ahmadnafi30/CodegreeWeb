@@ -3,11 +3,18 @@ package service
 import (
 	"CodegreeWebbs/entity"
 	"CodegreeWebbs/internal/repository"
+	"CodegreeWebbs/model"
+
+	"github.com/google/uuid"
 )
 
 type Scourse interface {
 	CreateCourse(courseData *entity.Course) error
-	GetAllCourses() ([]entity.Course, error)
+	GetAllCourses() ([]model.GetCourse, error)
+	SelectSubLang(id uint) (model.GetSublang, error)
+	Selectacourse(id uint) (model.GetCoursedetail, error)
+	GetGamification(sublangId uint, id uint) ([]model.Gamification, error)
+	CheckAnswer(userID uuid.UUID, quest uint, option uint) (bool, error)
 }
 
 type CourseService struct {
@@ -56,6 +63,51 @@ func (s *CourseService) CreateCourse(courseData *entity.Course) error {
 	return nil
 }
 
-func (s *CourseService) GetAllCourses() ([]entity.Course, error) {
+func (s *CourseService) GetAllCourses() ([]model.GetCourse, error) {
 	return s.CourseRepo.GetAllCourses()
+}
+
+func (s *CourseService) Selectacourse(id uint) (model.GetCoursedetail, error) {
+	courses, err := s.CourseRepo.GetCourse(id)
+	if err != nil {
+		return model.GetCoursedetail{}, err
+	}
+	return courses, nil
+}
+
+func (s *CourseService) SelectSubLang(id uint) (model.GetSublang, error) {
+	Sublang, err := s.CourseRepo.GetMaterialsBySubLangID(id)
+	if err != nil {
+		return model.GetSublang{}, err
+	}
+	return Sublang, nil
+}
+
+func (s *CourseService) GetGamification(sublangId uint, id uint) ([]model.Gamification, error) {
+	gamification, err := s.CourseRepo.GetQuestionsBySublangID(sublangId, id)
+	if err != nil {
+		return []model.Gamification{}, err
+	}
+	return gamification, nil
+}
+
+func (s *CourseService) CheckAnswer(userID uuid.UUID, quest uint, option uint) (bool, error) {
+	correctAnswer, err := s.CourseRepo.CheckCorrectAnswer(quest, option)
+	if err != nil {
+		return false, err
+	}
+
+	if correctAnswer {
+		userAnswer := &entity.UserAnswerGami{
+			UserID:     userID,
+			QuestionID: quest,
+			Answer:     option,
+			Value:      true,
+		}
+		if err := s.CourseRepo.SaveUserAnswer(userAnswer); err != nil {
+			return false, err
+		}
+	}
+
+	return correctAnswer, nil
 }

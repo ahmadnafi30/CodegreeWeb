@@ -2,6 +2,8 @@ package repository
 
 import (
 	"CodegreeWebbs/entity"
+	"CodegreeWebbs/model"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -12,11 +14,13 @@ type ICourse interface {
 	SaveMaterial(Material *entity.Material) error
 	SaveQuestion(gamification *entity.Question) error
 	SaveOptionCourse(option entity.Option) error
-	GetAllCourses() ([]entity.Course, error)
-	GetSubLanguagesByCourseID(courseID uint) ([]entity.SubLanguage, error)
-	GetMaterialsBySubLangID(subLangID uint) ([]entity.Material, error)
-	GetQuestionsByMaterialID(materialID uint) ([]entity.Question, error)
+	GetAllCourses() ([]model.GetCourse, error)
+	GetCourse(id uint) (model.GetCoursedetail, error)
+	GetMaterialsBySubLangID(subLangID uint) (model.GetSublang, error)
+	GetQuestionsBySublangID(sublangId uint, id uint) ([]model.Gamification, error)
 	GetOptionsByQuestionID(questionID uint) ([]entity.Option, error)
+	SaveUserAnswer(answer *entity.UserAnswerGami) error
+	CheckCorrectAnswer(quest uint, option uint) (bool, error)
 }
 
 type CourseRepo struct {
@@ -62,42 +66,101 @@ func (repo *CourseRepo) SaveOptionCourse(option entity.Option) error {
 	return nil
 }
 
-func (repo *CourseRepo) GetAllCourses() ([]entity.Course, error) {
+func (repo *CourseRepo) GetAllCourses() ([]model.GetCourse, error) {
 	var courses []entity.Course
-	if err := repo.db.Preload("SubLanguages").Find(&courses).Error; err != nil {
+	if err := repo.db.Debug().Find(&courses).Error; err != nil {
 		return nil, err
 	}
-	return courses, nil
+
+	var result []model.GetCourse
+	for _, course := range courses {
+		result = append(result, model.GetCourse{
+			Title:       course.Title,
+			Description: course.Description,
+		})
+	}
+	return result, nil
+}
+func (repo *CourseRepo) GetCourse(id uint) (model.GetCoursedetail, error) {
+	var course *entity.Course
+	if err := repo.db.Preload("SubLanguages").First(&course, id).Error; err != nil {
+		return model.GetCoursedetail{}, err
+	}
+
+	var subLangs []string
+	for _, lang := range course.SubLanguages {
+		subLangs = append(subLangs, lang.Title)
+	}
+
+	result := model.GetCoursedetail{
+		Progress: course.Progres,
+		Sublang:  subLangs,
+	}
+
+	return result, nil
 }
 
-func (repo *CourseRepo) GetSubLanguagesByCourseID(courseID uint) ([]entity.SubLanguage, error) {
-	var subLanguages []entity.SubLanguage
-	if err := repo.db.Where("course_id = ?", courseID).Find(&subLanguages).Error; err != nil {
-		return nil, err
+// func (repo *CourseRepo) GetSubLanguagesByCourseID(courseID uint) (model.get, error) {
+// 	var subLanguages []entity.SubLanguage
+// 	if err := repo.db.Where("course_id = ?", courseID).Find(&subLanguages).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	return subLanguages, nil
+// }
+
+func (repo *CourseRepo) GetMaterialsBySubLangID(subLangID uint) (model.GetSublang, error) {
+	var sublang *entity.SubLanguage
+	if err := repo.db.Where("id = ?", subLangID).Preload("Material").First(&sublang).Error; err != nil {
+		return model.GetSublang{}, err
 	}
-	return subLanguages, nil
+
+	result := model.GetSublang{
+		Title:       sublang.Title,
+		Description: sublang.Description,
+		Material:    sublang.Material.Material,
+	}
+	return result, nil
 }
 
-func (repo *CourseRepo) GetMaterialsBySubLangID(subLangID uint) ([]entity.Material, error) {
-	var materials []entity.Material
-	if err := repo.db.Where("sub_lang_id = ?", subLangID).Find(&materials).Error; err != nil {
-		return nil, err
+func (repo *CourseRepo) GetQuestionsBySublangID(sublangID uint, id uint) ([]model.Gamification, error) {
+	var q entity.Question
+	if err := repo.db.Where("id = ? AND sub_language_id = ?", id, sublangID).Preload("Options").First(&q).Error; err != nil {
+		return nil, errors.New("this subab no longer has any questions")
 	}
-	return materials, nil
-}
 
-func (repo *CourseRepo) GetQuestionsByMaterialID(materialID uint) ([]entity.Question, error) {
-	var questions []entity.Question
-	if err := repo.db.Where("material_id = ?", materialID).Find(&questions).Error; err != nil {
-		return nil, err
+	var options []string
+	for _, opt := range q.Options {
+		options = append(options, opt.Option)
 	}
-	return questions, nil
+
+	gamification := model.Gamification{
+		Question: q.Question,
+		Options:  options,
+	}
+
+	return []model.Gamification{gamification}, nil
 }
 
 func (repo *CourseRepo) GetOptionsByQuestionID(questionID uint) ([]entity.Option, error) {
 	var options []entity.Option
-	if err := repo.db.Where("question_id = ?", questionID).Find(&options).Error; err != nil {
+	if err := repo.db.Where("id = ?", questionID).Find(&options).Error; err != nil {
 		return nil, err
 	}
 	return options, nil
+}
+
+func (repo *CourseRepo) SaveUserAnswer(answer *entity.UserAnswerGami) error {
+	if err := repo.db.Create(answer).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *CourseRepo) CheckCorrectAnswer(quest uint, option uint) (bool, error) {
+	var correctOptID uint
+	if err := repo.db.Model(&entity.Option{}).Where("question_id = ? AND value = true", quest).Pluck("id", &correctOptID).Error; err != nil {
+		return false, errors.New("failed to find data")
+	}
+
+	return option == correctOptID, nil
 }

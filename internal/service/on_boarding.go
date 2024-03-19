@@ -67,7 +67,6 @@ func (s *OnBoardingService) GetAllOnboardingQuestions() ([]entity.Onboarding, er
 }
 
 func (s *OnBoardingService) CheckAnswer(userId uuid.UUID) ([]entity.LanguageCode, error) {
-	var recommendedLanguage entity.LanguageCode
 	answer, err := s.OnBoardingRepo.CheckAnswer(userId)
 	if err != nil {
 		return nil, err
@@ -77,19 +76,47 @@ func (s *OnBoardingService) CheckAnswer(userId uuid.UUID) ([]entity.LanguageCode
 
 	for _, ans := range answer {
 		if ans.QuestionID == 1 {
+			var recommendedLanguage entity.LanguageCode
 			switch ans.Answer {
 			case 1:
-				recommendedLanguage = entity.LanguageCode{ID: 1, Title: "Java", Description: "Bahasa Java adalah bahasa pemrograman tingkat tinggi yang bersifat berbasis objek, yang dikembangkan oleh Sun Microsystems (sekarang dimiliki oleh Oracle Corporation). Bahasa ini didesain agar bersifat mudah dipelajari, ditulis, dibaca, dan dijalankan oleh mesin virtual Java (JVM), yang membuatnya dapat dijalankan pada berbagai platform yang mendukung JVM, seperti Windows, macOS, Linux, dan sebagainya."}
+				recommendedLanguage = entity.LanguageCode{
+					ID:          1,
+					Title:       "Java",
+					Description: "Bahasa Java adalah bahasa pemrograman tingkat tinggi yang bersifat berbasis objek, yang dikembangkan oleh Sun Microsystems (sekarang dimiliki oleh Oracle Corporation). Bahasa ini didesain agar bersifat mudah dipelajari, ditulis, dibaca, dan dijalankan oleh mesin virtual Java (JVM), yang membuatnya dapat dijalankan pada berbagai platform yang mendukung JVM, seperti Windows, macOS, Linux, dan sebagainya.",
+					RecomSubab: []*entity.Recom{
+						{Name: "Konsep Dasar Pemrograman"},
+						{Name: "Input Output"},
+						{Name: "Seleksi kondisi"},
+						{Name: "Perulangan"},
+					},
+				}
 			case 2:
-				recommendedLanguage = entity.LanguageCode{ID: 2, Title: "Javascript", Description: "JavaScript adalah bahasa pemrograman tingkat tinggi yang sering digunakan untuk mengembangkan aplikasi web interaktif. Meskipun memiliki nama yang mirip dengan Java, JavaScript sebenarnya adalah bahasa yang berbeda dan memiliki fitur serta sintaksis yang berbeda pula. JavaScript awalnya dikembangkan oleh Netscape Communications Corporation pada tahun 1995 dengan nama LiveScript, kemudian berganti nama menjadi JavaScript."}
+				recommendedLanguage = entity.LanguageCode{
+					ID:          2,
+					Title:       "Javascript",
+					Description: "JavaScript adalah bahasa pemrograman tingkat tinggi yang sering digunakan untuk mengembangkan aplikasi web interaktif. Meskipun memiliki nama yang mirip dengan Java, JavaScript sebenarnya adalah bahasa yang berbeda dan memiliki fitur serta sintaksis yang berbeda pula. JavaScript awalnya dikembangkan oleh Netscape Communications Corporation pada tahun 1995 dengan nama LiveScript, kemudian berganti nama menjadi JavaScript.",
+					RecomSubab: []*entity.Recom{
+						{Name: "Konsep Dasar Pemrograman"},
+						{Name: "Input Output"},
+						{Name: "Seleksi kondisi"},
+						{Name: "Perulangan"},
+					},
+				}
 			case 3:
-				recommendedLanguage = entity.LanguageCode{ID: 3, Title: "Fluter", Description: "Flutter adalah sebuah framework pengembangan aplikasi mobile open-source yang dikembangkan oleh Google. Diperkenalkan pada tahun 2018, Flutter dirancang untuk memungkinkan pengembang untuk membuat aplikasi yang kaya dan indah secara konsisten di berbagai platform seperti Android, iOS, dan bahkan web."}
+				recommendedLanguage = entity.LanguageCode{
+					ID:          3,
+					Title:       "Flutter",
+					Description: "Flutter adalah sebuah framework pengembangan aplikasi mobile open-source yang dikembangkan oleh Google. Diperkenalkan pada tahun 2018, Flutter dirancang untuk memungkinkan pengembang untuk membuat aplikasi yang kaya dan indah secara konsisten di berbagai platform seperti Android, iOS, dan bahkan web.",
+					RecomSubab: []*entity.Recom{
+						{Name: "Konsep Dasar Pemrograman"},
+						{Name: "Input Output"},
+						{Name: "Seleksi kondisi"},
+						{Name: "Perulangan"},
+					},
+				}
 			}
+			languages = append(languages, recommendedLanguage)
 		}
-	}
-
-	if recommendedLanguage.ID != 0 {
-		languages = append(languages, recommendedLanguage)
 	}
 
 	return languages, nil

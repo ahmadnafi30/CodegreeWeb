@@ -6,12 +6,9 @@ import (
 	"CodegreeWebbs/pkg/response"
 	"fmt"
 
-	// "log"
 	"net/http"
 	"os"
 	"time"
-
-	// "github.com/gin-contrib/cors"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,9 +34,7 @@ func (r *Rest) MountEndpoints() {
 	routerGroup.POST("/register", r.Register)
 	routerGroup.POST("/login", r.Login)
 	routerGroup.GET("/profile", r.middleware.AuthenticateUser, r.GetProfile)
-	// routerGroup.GET("/login-user", r.middleware.AuthenticateUser, r.GetLoginUser)
 
-	// routerGroup.GET("/next_onboarding_question", r.middleware.AuthenticateUser, r.GetNextOnboardingQuestion)
 	routerGroup.POST("/create_onboarding_question", r.CreateOnboardingQuestion)
 	routerGroup.GET("/onboarding_questions", r.middleware.AuthenticateUser, r.GetOnboardingQuestions)
 	routerGroup.POST("/answer_onboarding_question", r.middleware.AuthenticateUser, r.AnswerOnboardingQuestion)
@@ -48,6 +43,10 @@ func (r *Rest) MountEndpoints() {
 	// routerGroup.POST("/create_language", r.CreateLanguage)
 	routerGroup.POST("/create_course", r.CreateCourse)
 	routerGroup.GET("/get_course", r.GetAllCourses)
+	routerGroup.POST("/select_course", r.SelectCourse)
+	routerGroup.POST("/select_sublang", r.SelectSubLang)
+	routerGroup.POST("/select_question", r.GetGamification)
+	routerGroup.POST("/answer_quest", r.middleware.AuthenticateUser, r.CheckAnswer)
 }
 
 func (r *Rest) Run() {

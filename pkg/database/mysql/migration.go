@@ -16,10 +16,13 @@ func Migration(db *gorm.DB) error {
 		&entity.UserAnswerOnBoarding{},
 		&entity.Course{},
 		&entity.SubLanguage{},
-		&entity.Material{},
 		&entity.LanguageCode{},
+		&entity.Recom{},
+		&entity.Material{},
 		&entity.Question{},
 		&entity.Option{},
+		&entity.Payment{},
+		&entity.UserAnswerGami{},
 	); err != nil {
 		log.Fatalf("failed migration db: %v", err)
 		return err
