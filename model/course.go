@@ -20,3 +20,11 @@ type Gamification struct {
 	Question string   `json:"question"`
 	Options  []string `json:"options"`
 }
+
+type Mentor struct {
+	Name         string `json:"name"`
+	Language     string `json:"language"`
+	Description  string `json:"description"`
+	Company      string `json:"company"`
+	Linkwhatsapp string `json:"link_whatsapp"`
+}

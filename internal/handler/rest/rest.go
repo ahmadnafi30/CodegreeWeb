@@ -47,6 +47,8 @@ func (r *Rest) MountEndpoints() {
 	routerGroup.POST("/select_sublang", r.SelectSubLang)
 	routerGroup.POST("/select_question", r.GetGamification)
 	routerGroup.POST("/answer_quest", r.middleware.AuthenticateUser, r.CheckAnswer)
+	routerGroup.POST("/addmentor", r.CreateMentor)
+	routerGroup.GET("/get_mentors", r.GetAllMentor)
 }
 
 func (r *Rest) Run() {

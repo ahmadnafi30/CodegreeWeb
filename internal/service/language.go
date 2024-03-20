@@ -3,11 +3,14 @@ package service
 import (
 	"CodegreeWebbs/entity"
 	"CodegreeWebbs/internal/repository"
+	"CodegreeWebbs/model"
 	"errors"
 )
 
 type SLanguage interface {
 	CreateLanguage(language entity.LanguageCode) error
+	CreateMentor(mentor entity.Mentor) error
+	GetAllMentor() ([]model.Mentor, error)
 }
 
 type LanguageService struct {
@@ -26,4 +29,31 @@ func (s *LanguageService) CreateLanguage(language entity.LanguageCode) error {
 		return errors.New("failed to create language: " + err.Error())
 	}
 	return nil
+}
+
+func (s *LanguageService) CreateMentor(mentor entity.Mentor) error {
+	_, err := s.LanguageRepo.CreateMentor(mentor)
+	if err != nil {
+		return errors.New("failed to add mentor " + err.Error())
+	}
+	return nil
+}
+
+func (s *LanguageService) GetAllMentor() ([]model.Mentor, error) {
+	mentors, err := s.LanguageRepo.GetALLMentor()
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]model.Mentor, len(mentors))
+	for i, v := range mentors {
+		result[i] = model.Mentor{
+			Name:         v.Name,
+			Language:     v.Language,
+			Description:  v.Description,
+			Company:      v.Company,
+			Linkwhatsapp: v.Linkwhatsapp,
+		}
+	}
+	return result, nil
 }

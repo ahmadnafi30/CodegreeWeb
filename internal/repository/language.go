@@ -9,6 +9,8 @@ import (
 
 type RLanguage interface {
 	SaveLanguage(language entity.LanguageCode) (entity.LanguageCode, error)
+	CreateMentor(mentor entity.Mentor) (entity.Mentor, error)
+	GetALLMentor() ([]entity.Mentor, error)
 }
 
 type LanguageRepo struct {
@@ -25,4 +27,20 @@ func (repo *LanguageRepo) SaveLanguage(language entity.LanguageCode) (entity.Lan
 		return entity.LanguageCode{}, errors.New("failed to save language: " + err.Error())
 	}
 	return language, nil
+}
+
+func (repo *LanguageRepo) CreateMentor(mentor entity.Mentor) (entity.Mentor, error) {
+	err := repo.db.Debug().Create(&mentor).Error
+	if err != nil {
+		return entity.Mentor{}, err
+	}
+	return mentor, nil
+}
+
+func (repo *LanguageRepo) GetALLMentor() ([]entity.Mentor, error) {
+	var mentors []entity.Mentor
+	if err := repo.db.Debug().Find(&mentors).Error; err != nil {
+		return nil, err
+	}
+	return mentors, nil
 }
