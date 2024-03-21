@@ -11,6 +11,7 @@ type RLanguage interface {
 	SaveLanguage(language entity.LanguageCode) (entity.LanguageCode, error)
 	CreateMentor(mentor entity.Mentor) (entity.Mentor, error)
 	GetALLMentor() ([]entity.Mentor, error)
+	SelectMentorWhatsAppLink(id uint) (string, error)
 }
 
 type LanguageRepo struct {
@@ -43,4 +44,12 @@ func (repo *LanguageRepo) GetALLMentor() ([]entity.Mentor, error) {
 		return nil, err
 	}
 	return mentors, nil
+}
+
+func (repo *LanguageRepo) SelectMentorWhatsAppLink(id uint) (string, error) {
+	var linkWhatsApp string
+	if err := repo.db.Model(&entity.Mentor{}).Where("id = ?", id).Pluck("linkwhatsapp", &linkWhatsApp).Error; err != nil {
+		return "", err
+	}
+	return linkWhatsApp, nil
 }

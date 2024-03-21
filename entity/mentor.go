@@ -8,5 +8,5 @@ type Mentor struct {
 	Name           string `json:"name" gorm:"varchar(255) not null;"`
 	Description    string `json:"description" gorm:"text"`
 	Company        string `json:"company" gorm:"varchar(255)"`
-	Linkwhatsapp   string `json:"link_whatsapp" gorm:"varchar(100);"`
+	Linkwhatsapp   string `json:"link_whatsapp,omitempty" gorm:"varchar(100);"`
 }

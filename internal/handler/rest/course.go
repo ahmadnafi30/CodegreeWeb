@@ -36,6 +36,7 @@ func (r *Rest) GetAllCourses(ctx *gin.Context) {
 }
 
 func (r *Rest) SelectCourse(ctx *gin.Context) {
+
 	var requestBody struct {
 		ID uint `json:"id"`
 	}
@@ -91,7 +92,6 @@ func (r *Rest) GetGamification(ctx *gin.Context) {
 		response.Error(ctx, http.StatusBadRequest, "Invalid question ID", errors.New("empty course ID"))
 
 	}
-
 	question, err := r.service.CourseService.GetGamification(requestBody.SublangID, requestBody.ID)
 	if err != nil {
 		response.Error(ctx, http.StatusInternalServerError, "Failed to get question", err)

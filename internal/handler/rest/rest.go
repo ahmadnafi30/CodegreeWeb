@@ -49,8 +49,11 @@ func (r *Rest) MountEndpoints() {
 	routerGroup.POST("/answer_quest", r.middleware.AuthenticateUser, r.CheckAnswer)
 	routerGroup.POST("/addmentor", r.CreateMentor)
 	routerGroup.GET("/get_mentors", r.middleware.AuthenticateUser, r.GetAllMentor)
+	routerGroup.POST("/select_mentor", r.middleware.AuthenticateUser, r.SelectMentorWhatsAppLink)
+
 	routerGroup.GET("/create-payment", r.middleware.AuthenticateUser, r.CreatePayment)
 	routerGroup.POST("/update_status", r.PaymentHandlerNotification)
+	routerGroup.GET("/free_trial", r.middleware.AuthenticateUser, r.CreateFreeTrial)
 }
 
 func (r *Rest) Run() {

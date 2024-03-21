@@ -24,6 +24,7 @@ func Migration(db *gorm.DB) error {
 		&entity.Payment{},
 		&entity.UserAnswerGami{},
 		&entity.Mentor{},
+		&entity.FreeTrial{},
 	); err != nil {
 		log.Fatalf("failed migration db: %v", err)
 		return err

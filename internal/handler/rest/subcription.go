@@ -60,6 +60,7 @@ func (r *Rest) CreatePayment(ctx *gin.Context) {
 		SnapURL: snapResp.RedirectURL,
 		Status:  "Pending",
 		Amount:  149000,
+		// Expiry:  time.Now().AddDate(0, 1, 0),
 	}
 
 	if err := r.service.PaymentService.CreatePayment(&data); err != nil {
@@ -94,4 +95,31 @@ func (r *Rest) PaymentHandlerNotification(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to verify payment"})
+}
+
+func (r *Rest) CreateFreeTrial(ctx *gin.Context) {
+	userIDRaw, ok := ctx.Get("userID")
+	if !ok {
+		response.Error(ctx, http.StatusNotFound, "User ID not found.", nil)
+		return
+	}
+	userID, ok := userIDRaw.(uuid.UUID)
+	if !ok {
+		response.Error(ctx, http.StatusInternalServerError, "Failed to parse User ID.", nil)
+		return
+	}
+	userName := ctx.GetString("name")
+	userEmail := ctx.GetString("email")
+
+	data := entity.FreeTrial{
+		UserID: userID,
+		Name:   userName,
+		Email:  userEmail,
+		// Expiry: time.Now().AddDate(0, 1, 0),
+	}
+	if err := r.service.PaymentService.CreateTrial(&data); err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "Failed to save database", err)
+		return
+	}
+	response.Success(ctx, http.StatusOK, "success make free trial", nil)
 }

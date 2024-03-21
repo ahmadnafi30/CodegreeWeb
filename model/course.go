@@ -22,9 +22,9 @@ type Gamification struct {
 }
 
 type Mentor struct {
-	Name         string `json:"name"`
-	Language     string `json:"language"`
-	Description  string `json:"description"`
-	Company      string `json:"company"`
-	Linkwhatsapp string `json:"link_whatsapp"`
+	ID          uint   `gorm:"column:id;primary_key" json:"id"`
+	Name        string `json:"name"`
+	Language    string `json:"language"`
+	Description string `json:"description"`
+	Company     string `json:"company"`
 }

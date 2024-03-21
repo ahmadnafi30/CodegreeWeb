@@ -11,6 +11,7 @@ type SLanguage interface {
 	CreateLanguage(language entity.LanguageCode) error
 	CreateMentor(mentor entity.Mentor) error
 	GetAllMentor() ([]model.Mentor, error)
+	SelectMentorWhatsAppLink(id uint) (string, error)
 }
 
 type LanguageService struct {
@@ -44,16 +45,24 @@ func (s *LanguageService) GetAllMentor() ([]model.Mentor, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	result := make([]model.Mentor, len(mentors))
 	for i, v := range mentors {
 		result[i] = model.Mentor{
-			Name:         v.Name,
-			Language:     v.Language,
-			Description:  v.Description,
-			Company:      v.Company,
-			Linkwhatsapp: v.Linkwhatsapp,
+			ID:          v.ID,
+			Name:        v.Name,
+			Language:    v.Language,
+			Description: v.Description,
+			Company:     v.Company,
 		}
 	}
 	return result, nil
+}
+
+func (s *LanguageService) SelectMentorWhatsAppLink(id uint) (string, error) {
+	linkWhatsApp, err := s.LanguageRepo.SelectMentorWhatsAppLink(id)
+	if err != nil {
+		return "", err
+	}
+
+	return linkWhatsApp, nil
 }

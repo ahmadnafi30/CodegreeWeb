@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	// "github.com/google/uuid"
 )
 
 func (r *Rest) CreateLanguage(ctx *gin.Context) {
@@ -51,4 +52,40 @@ func (r *Rest) GetAllMentor(ctx *gin.Context) {
 		return
 	}
 	response.Success(ctx, http.StatusOK, "Get all mentors", mentors)
+}
+
+func (r *Rest) SelectMentorWhatsAppLink(ctx *gin.Context) {
+	// userIDRaw, exists := ctx.Get("userID")
+	// if !exists {
+	// 	response.Error(ctx, http.StatusInternalServerError, "failed to get user profile", errors.New("empty userID"))
+	// 	return
+	// }
+
+	// userID, ok := userIDRaw.(uuid.UUID)
+	// if !ok {
+	// 	response.Error(ctx, http.StatusInternalServerError, "failed to get user profile", errors.New("userID is not a UUID"))
+	// 	return
+	// }
+
+	// err := r.service.PaymentService.CheckAccess(userID)
+	// if err != nil {
+	// 	response.Error(ctx, http.StatusForbidden, "You don't have access to this resource", err)
+	// 	return
+	// }
+
+	var requestBody struct {
+		ID uint `json:"id"`
+	}
+	if err := ctx.BindJSON(&requestBody); err != nil {
+		response.Error(ctx, http.StatusBadRequest, "Invalid JSON format", err)
+		return
+	}
+
+	linkWhatsApp, err := r.service.LanguageCodeService.SelectMentorWhatsAppLink(requestBody.ID)
+	if err != nil {
+		response.Error(ctx, http.StatusNotFound, "No mentor found", err)
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "Success", gin.H{"link_whatsapp": linkWhatsApp})
 }

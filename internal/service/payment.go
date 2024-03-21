@@ -8,6 +8,7 @@ import (
 
 	// "encoding/json"
 
+	"github.com/google/uuid"
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/coreapi"
 	"golang.org/x/net/context"
@@ -17,6 +18,8 @@ type SPayment interface {
 	CreatePayment(payment *entity.Payment) error
 	UpdatePaymentStatus(data string) error
 	VerifyPayment(ctx context.Context, orderId string) (bool, error)
+	CreateTrial(freetrial *entity.FreeTrial) error
+	CheckAccess(userID uuid.UUID) error
 }
 
 type PaymentService struct {
@@ -83,4 +86,25 @@ func (s *PaymentService) VerifyPayment(ctx context.Context, orderId string) (boo
 		}
 	}
 	return false, nil
+}
+func (s *PaymentService) CreateTrial(freetrial *entity.FreeTrial) error {
+	err := s.PaymentRepo.CreateFreeTrial(freetrial)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PaymentService) CheckAccess(userID uuid.UUID) error {
+	err := s.PaymentRepo.CheckTransaction(userID)
+	if err != nil {
+		return err
+	}
+
+	err = s.PaymentRepo.CheckTrial(userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
