@@ -49,6 +49,8 @@ func (r *Rest) MountEndpoints() {
 	routerGroup.POST("/answer_quest", r.middleware.AuthenticateUser, r.CheckAnswer)
 	routerGroup.POST("/addmentor", r.CreateMentor)
 	routerGroup.GET("/get_mentors", r.middleware.AuthenticateUser, r.GetAllMentor)
+	routerGroup.GET("/create-payment", r.middleware.AuthenticateUser, r.CreatePayment)
+	routerGroup.POST("/update_status", r.PaymentHandlerNotification)
 }
 
 func (r *Rest) Run() {
@@ -59,7 +61,6 @@ func (r *Rest) Run() {
 
 	r.router.Run(fmt.Sprintf(":%s", port))
 }
-
 func (r *Rest) TestTimeout(ctx *gin.Context) {
 	time.Sleep(3 * time.Second)
 	response.Success(ctx, http.StatusOK, "success", nil)
