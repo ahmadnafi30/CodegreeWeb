@@ -70,12 +70,12 @@ func (s *PaymentService) VerifyPayment(ctx context.Context, orderId string) (boo
 				// e.g.: 'Payment status challenged. Please take action on your Merchant Administration Portal'
 			} else if transactionStatusResp.FraudStatus == "accept" {
 				// TODO: Set transaction status on your database to 'success'
-				// s.UpdatePaymentStatus(orderId)
+				s.UpdatePaymentStatus(orderId)
 				return true, nil
 			}
 		case "settlement":
 			// Set transaction status on your database to 'success'
-			// s.UpdatePaymentStatus(orderId)
+			s.UpdatePaymentStatus(orderId)
 			return true, nil
 		case "deny":
 			// TODO: You can ignore 'deny', because most of the time it allows payment retries
