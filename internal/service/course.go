@@ -120,7 +120,7 @@ func (s *CourseService) GetnameCerification(name string, courseid uint) (model.C
 	}
 	certification := model.Certification{
 		Name:     name,
-		Language: coursename,
+		Language: "Bahasa Pemrograman " + coursename,
 	}
 	return certification, nil
 }

@@ -3,7 +3,6 @@ package service
 import (
 	"CodegreeWebbs/entity"
 	"CodegreeWebbs/internal/repository"
-	"fmt"
 	"os"
 
 	// "CodegreeWebbs/pkg/response"
@@ -54,9 +53,8 @@ func (s *PaymentService) UpdatePaymentStatus(data string) error {
 func (s *PaymentService) VerifyPayment(ctx context.Context, orderId string) (bool, error) {
 	var client coreapi.Client
 
-	clientkey := os.Getenv("MIDTRANS_CLIENT_KEY")
-	fmt.Println(clientkey)
-	client.New(clientkey, midtrans.Sandbox)
+	serverkey := os.Getenv("MIDTRANS_SERVER_KEY")
+	client.New(serverkey, midtrans.Sandbox)
 
 	// Check transaction status with Midtrans using orderId
 	transactionStatusResp, err := client.CheckTransaction(orderId)
