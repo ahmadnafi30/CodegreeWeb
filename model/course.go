@@ -1,5 +1,7 @@
 package model
 
+// import "CodegreeWebbs/model"
+
 type GetCourse struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -17,8 +19,14 @@ type GetSublang struct {
 }
 
 type Gamification struct {
-	Question string   `json:"question"`
-	Options  []string `json:"options"`
+	QuestionID uint
+	Question   string `json:"question"`
+	Options    []Option
+}
+
+type Option struct {
+	ID     uint
+	Option string
 }
 
 type Mentor struct {

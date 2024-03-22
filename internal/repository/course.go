@@ -128,14 +128,18 @@ func (repo *CourseRepo) GetQuestionsBySublangID(sublangID uint, id uint) ([]mode
 		return nil, errors.New("this subab no longer has any questions")
 	}
 
-	var options []string
+	var options []model.Option
 	for _, opt := range q.Options {
-		options = append(options, opt.Option)
+		options = append(options, model.Option{
+			ID:     opt.ID,
+			Option: opt.Option,
+		})
 	}
 
 	gamification := model.Gamification{
-		Question: q.Question,
-		Options:  options,
+		QuestionID: q.ID,
+		Question:   q.Question,
+		Options:    options,
 	}
 
 	return []model.Gamification{gamification}, nil

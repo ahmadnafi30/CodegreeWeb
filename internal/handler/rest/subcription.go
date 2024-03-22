@@ -80,7 +80,7 @@ func (r *Rest) PaymentHandlerNotification(ctx *gin.Context) {
 		return
 	}
 
-	orderID, exists := notificationPayload["order_id"].(string)
+	orderID, exists := notificationPayload["id"].(string)
 	if !exists {
 		response.Error(ctx, http.StatusBadRequest, "Order ID not found in payload", nil)
 		return
