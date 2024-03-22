@@ -3,6 +3,7 @@ package service
 import (
 	"CodegreeWebbs/entity"
 	"CodegreeWebbs/internal/repository"
+	"os"
 
 	// "CodegreeWebbs/pkg/response"
 
@@ -50,41 +51,42 @@ func (s *PaymentService) UpdatePaymentStatus(data string) error {
 	return nil
 }
 func (s *PaymentService) VerifyPayment(ctx context.Context, orderId string) (bool, error) {
-
 	var client coreapi.Client
 
-	client.New("SB-Mid-client-viLy_yj40DPmwY0C", midtrans.Sandbox)
-
-	// Parse JSON request body and use it to set json to payload
+	clientkey := os.Getenv("MIDTRANS_CLIENT_KEY")
+	client.New(clientkey, midtrans.Sandbox)
 
 	// Check transaction status with Midtrans using orderId
-	transactionStatusResp, e := client.CheckTransaction(orderId)
-	if e != nil {
-		return false, e
-	} else {
-		if transactionStatusResp != nil {
-			// Do set transaction status based on response from check transaction status
-			if transactionStatusResp.TransactionStatus == "capture" {
-				if transactionStatusResp.FraudStatus == "challenge" {
-					// TODO set transaction status on your database to 'challenge'
-					// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
-				} else if transactionStatusResp.FraudStatus == "accept" {
-					// TODO set transaction status on your database to 'success'
-					return true, nil
-				}
-			} else if transactionStatusResp.TransactionStatus == "settlement" {
+	transactionStatusResp, err := client.CheckTransaction(orderId)
+	if err != nil {
+		return false, err
+	}
+
+	if transactionStatusResp != nil {
+		switch transactionStatusResp.TransactionStatus {
+		case "capture":
+			if transactionStatusResp.FraudStatus == "challenge" {
+				// TODO: Set transaction status on your database to 'challenge'
+				// e.g.: 'Payment status challenged. Please take action on your Merchant Administration Portal'
+			} else if transactionStatusResp.FraudStatus == "accept" {
+				// TODO: Set transaction status on your database to 'success'
 				s.UpdatePaymentStatus(orderId)
 				return true, nil
-			} else if transactionStatusResp.TransactionStatus == "deny" {
-				// TODO you can ignore 'deny', because most of the time it allows payment retries
-				// and later can become success
-			} else if transactionStatusResp.TransactionStatus == "cancel" || transactionStatusResp.TransactionStatus == "expire" {
-				// TODO set transaction status on your databaase to 'failure'
-			} else if transactionStatusResp.TransactionStatus == "pending" {
-				// TODO set transaction status on your databaase to 'pending' / waiting payment
 			}
+		case "settlement":
+			// Set transaction status on your database to 'success'
+			s.UpdatePaymentStatus(orderId)
+			return true, nil
+		case "deny":
+			// TODO: You can ignore 'deny', because most of the time it allows payment retries
+			// and later can become success
+		case "cancel", "expire":
+			// TODO: Set transaction status on your database to 'failure'
+		case "pending":
+			// TODO: Set transaction status on your database to 'pending' / waiting payment
 		}
 	}
+
 	return false, nil
 }
 func (s *PaymentService) CreateTrial(freetrial *entity.FreeTrial) error {

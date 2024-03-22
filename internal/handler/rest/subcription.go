@@ -5,6 +5,7 @@ import (
 	"CodegreeWebbs/entity"
 	"CodegreeWebbs/pkg/response"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -25,9 +26,11 @@ func (r *Rest) CreatePayment(ctx *gin.Context) {
 	}
 	userName := ctx.GetString("name")
 	userEmail := ctx.GetString("email")
+	clientkey := os.Getenv("MIDTRANS_CLIENT_KEY")
+	serverkey := os.Getenv("MIDTRANS_SERVER_KEY")
 
-	midtrans.ClientKey = "SB-Mid-client-viLy_yj40DPmwY0C"
-	midtrans.ServerKey = "SB-Mid-server-gqgtvkqc5XjKz6AmvQ42fP8K"
+	midtrans.ClientKey = clientkey
+	midtrans.ServerKey = serverkey
 	midtrans.Environment = midtrans.Sandbox
 
 	orderID := uuid.New().String()
