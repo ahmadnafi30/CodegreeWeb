@@ -3,6 +3,7 @@ package service
 import (
 	"CodegreeWebbs/entity"
 	"CodegreeWebbs/internal/repository"
+	"fmt"
 	"os"
 
 	// "CodegreeWebbs/pkg/response"
@@ -54,6 +55,7 @@ func (s *PaymentService) VerifyPayment(ctx context.Context, orderId string) (boo
 	var client coreapi.Client
 
 	clientkey := os.Getenv("MIDTRANS_CLIENT_KEY")
+	fmt.Println(clientkey)
 	client.New(clientkey, midtrans.Sandbox)
 
 	// Check transaction status with Midtrans using orderId
