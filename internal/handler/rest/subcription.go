@@ -73,6 +73,7 @@ func (r *Rest) CreatePayment(ctx *gin.Context) {
 
 	response.Success(ctx, http.StatusOK, "success make payment", snapResp.RedirectURL)
 }
+
 func (r *Rest) PaymentHandlerNotification(ctx *gin.Context) {
 	var notificationPayload map[string]interface{}
 	if err := ctx.BindJSON(&notificationPayload); err != nil {
@@ -81,8 +82,8 @@ func (r *Rest) PaymentHandlerNotification(ctx *gin.Context) {
 	}
 
 	orderID, exists := notificationPayload["order_id"].(string)
-	if !exists {
-		response.Error(ctx, http.StatusBadRequest, "Order ID not found in payload", nil)
+	if !exists || orderID == "" {
+		response.Error(ctx, http.StatusBadRequest, "Invalid or missing order ID in payload", nil)
 		return
 	}
 
@@ -97,7 +98,7 @@ func (r *Rest) PaymentHandlerNotification(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to verify payment"})
+	response.Error(ctx, http.StatusBadRequest, "Failed to verify payment", nil)
 }
 
 func (r *Rest) CreateFreeTrial(ctx *gin.Context) {
