@@ -137,3 +137,16 @@ func (r *Rest) CheckAnswer(ctx *gin.Context) {
 		response.Success(ctx, http.StatusOK, "Incorrect answer", nil)
 	}
 }
+
+func (r *Rest) GetCerification(ctx *gin.Context) {
+	var requestBody struct {
+		Courseid uint
+	}
+	userName := ctx.GetString("name")
+	getname, err := r.service.CourseService.GetnameCerification(userName, requestBody.Courseid)
+	if err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "CourseNotFound", err)
+		return
+	}
+	response.Success(ctx, http.StatusOK, "Success", getname)
+}

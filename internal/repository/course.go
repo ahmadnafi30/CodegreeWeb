@@ -21,6 +21,7 @@ type ICourse interface {
 	GetOptionsByQuestionID(questionID uint) ([]entity.Option, error)
 	SaveUserAnswer(answer *entity.UserAnswerGami) error
 	CheckCorrectAnswer(quest uint, option uint) (bool, error)
+	GetnameCerification(courseid uint) (string, error)
 }
 
 type CourseRepo struct {
@@ -167,4 +168,14 @@ func (repo *CourseRepo) CheckCorrectAnswer(quest uint, option uint) (bool, error
 	}
 
 	return option == correctOptID, nil
+}
+
+func (repo *CourseRepo) GetnameCerification(courseid uint) (string, error) {
+	var course entity.Course
+	if err := repo.db.Where("id = ?", courseid).Find(&course).Error; err != nil {
+		return "", err
+	}
+	result := course.Title
+
+	return result, nil
 }

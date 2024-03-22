@@ -36,3 +36,8 @@ type Mentor struct {
 	Description string `json:"description"`
 	Company     string `json:"company"`
 }
+
+type Certification struct {
+	Name     string `json:"name"`
+	Language string `json:"language"`
+}

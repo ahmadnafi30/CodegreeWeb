@@ -15,6 +15,7 @@ type Scourse interface {
 	Selectacourse(id uint) (model.GetCoursedetail, error)
 	GetGamification(sublangId uint, id uint) ([]model.Gamification, error)
 	CheckAnswer(userID uuid.UUID, quest uint, option uint) (bool, error)
+	GetnameCerification(name string, courseid uint) (model.Certification, error)
 }
 
 type CourseService struct {
@@ -110,4 +111,16 @@ func (s *CourseService) CheckAnswer(userID uuid.UUID, quest uint, option uint) (
 	}
 
 	return correctAnswer, nil
+}
+
+func (s *CourseService) GetnameCerification(name string, courseid uint) (model.Certification, error) {
+	coursename, err := s.CourseRepo.GetnameCerification(courseid)
+	if err != nil {
+		return model.Certification{}, err
+	}
+	certification := model.Certification{
+		Name:     name,
+		Language: coursename,
+	}
+	return certification, nil
 }
